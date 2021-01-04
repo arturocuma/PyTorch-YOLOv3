@@ -137,5 +137,6 @@ if __name__ == "__main__":
         plt.gca().xaxis.set_major_locator(NullLocator())
         plt.gca().yaxis.set_major_locator(NullLocator())
         filename = path.split("/")[-1].split(".")[0]
-        plt.savefig(f"output/{filename}.png", bbox_inches="tight", pad_inches=0.0)
+        # plt.savefig(f"output/{filename}.png", bbox_inches="tight", pad_inches=0.0)
+        plt.savefig("output/" + str(filename) + ".png", bbox_inches="tight", pad_inches=0.0)
         plt.close()

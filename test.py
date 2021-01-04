@@ -50,8 +50,15 @@ def evaluate(model, path, iou_thres, conf_thres, nms_thres, img_size, batch_size
         sample_metrics += get_batch_statistics(outputs, targets, iou_threshold=iou_thres)
 
     # Concatenate sample statistics
-    true_positives, pred_scores, pred_labels = [np.concatenate(x, 0) for x in list(zip(*sample_metrics))]
-    precision, recall, AP, f1, ap_class = ap_per_class(true_positives, pred_scores, pred_labels, labels)
+    if len(sample_metrics) > 0:
+        true_positives, pred_scores, pred_labels = [np.concatenate(x, 0) for x in list(zip(*sample_metrics))]
+        precision, recall, AP, f1, ap_class = ap_per_class(true_positives, pred_scores, pred_labels, labels)
+    else:
+        ap_class = np.unique(labels).astype("int32")
+        precision = np.zeros(len(ap_class), dtype=np.float)
+        recall = precision
+        AP = precision
+        f1 = 2 * precision * recall / (precision + recall + 1e-16)
 
     return precision, recall, AP, f1, ap_class
 
@@ -100,6 +107,8 @@ if __name__ == "__main__":
 
     print("Average Precisions:")
     for i, c in enumerate(ap_class):
-        print(f"+ Class '{c}' ({class_names[c]}) - AP: {AP[i]}")
+        # print(f"+ Class '{c}' ({class_names[c]}) - AP: {AP[i]}")
+        print("+ Class " + str(c) + "(" + str(class_names[c]) + ") - AP: " + str(AP[i]))
 
-    print(f"mAP: {AP.mean()}")
+    # print(f"mAP: {AP.mean()}")
+    print("mAP: " + str(AP.mean()))
